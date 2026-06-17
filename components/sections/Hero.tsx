@@ -123,6 +123,7 @@ export function Hero() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const W = window.innerWidth;
     const H = window.innerHeight;
+    if (!W || !H) return; // layout not measured yet — don't poison the canvas with a 0×0 size
     if (canvas.width !== W * dpr || canvas.height !== H * dpr) {
       canvas.width = W * dpr;
       canvas.height = H * dpr;
@@ -133,8 +134,19 @@ export function Hero() {
       ctx.imageSmoothingQuality = "high";
     }
     const n = imgs.length;
-    const img = imgs[Math.min(Math.max(Math.round(index), 0), n - 1)];
-    if (!img?.complete) return;
+    const idx = Math.min(Math.max(Math.round(index), 0), n - 1);
+    let img = imgs[idx];
+    // Frames stream in progressively — if the target frame hasn't loaded yet,
+    // draw the nearest loaded neighbour so scrubbing never blanks out.
+    if (!img?.complete || !img.naturalWidth) {
+      for (let r = 1; r < n; r++) {
+        const lo = imgs[idx - r];
+        if (lo?.complete && lo.naturalWidth) { img = lo; break; }
+        const hi = imgs[idx + r];
+        if (hi?.complete && hi.naturalWidth) { img = hi; break; }
+      }
+    }
+    if (!img?.complete || !img.naturalWidth) return;
     const ir = img.naturalWidth / img.naturalHeight;
     const cr = W / H;
     let dw: number, dh: number, dx: number, dy: number;
@@ -242,28 +254,58 @@ export function Hero() {
     [draw]
   );
 
-  // ---- preload all frames with a loading % ----
+  // ---- progressive frame loader ----
+  // Reveal the hero as soon as the FIRST frame paints, then stream the rest in
+  // the background (throttled) so the page is interactive in ~one image's time
+  // instead of waiting on all 300 HD frames (~20MB). draw() falls back to the
+  // nearest loaded frame, so scrubbing stays smooth while frames trickle in.
   useEffect(() => {
     let mounted = true;
     const imgs: HTMLImageElement[] = new Array(FRAME_COUNT);
+    imagesRef.current = imgs; // share the array immediately; draw() guards on .complete
+    countRef.current = FRAME_COUNT;
     let done = 0;
-    for (let i = 0; i < FRAME_COUNT; i++) {
-      const img = new Image();
-      img.decoding = "async";
-      img.fetchPriority = i < 16 ? "high" : "low";
-      img.src = frameSrc(i);
-      img.onload = img.onerror = () => {
-        if (!mounted) return;
-        if (img.complete && img.naturalWidth) imgs[i] = img;
-        done++;
-        setProgress(done / FRAME_COUNT);
-        if (done === FRAME_COUNT) {
-          imagesRef.current = imgs.filter(Boolean);
-          countRef.current = imagesRef.current.length;
-          setReady(true);
-        }
+    let revealed = false;
+
+    const reveal = () => {
+      if (revealed || !mounted) return;
+      revealed = true;
+      setReady(true);
+    };
+
+    const load = (i: number, priority: "high" | "low") =>
+      new Promise<void>((resolve) => {
+        const img = new Image();
+        img.decoding = "async";
+        img.fetchPriority = priority;
+        const fin = () => {
+          if (mounted) {
+            if (img.complete && img.naturalWidth) imgs[i] = img;
+            setProgress(++done / FRAME_COUNT);
+          }
+          resolve();
+        };
+        img.onload = fin;
+        img.onerror = fin;
+        img.src = frameSrc(i);
+      });
+
+    const HEAD = 16; // opening frames loaded eagerly
+    (async () => {
+      await load(0, "high"); // paint the very first frame, then drop the loader
+      reveal();
+      await Promise.all(
+        Array.from({ length: HEAD - 1 }, (_, k) => load(k + 1, "high"))
+      );
+      // Stream the remaining frames in the background with light concurrency.
+      const CONCURRENCY = 6;
+      let next = HEAD;
+      const worker = async () => {
+        while (mounted && next < FRAME_COUNT) await load(next++, "low");
       };
-    }
+      await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+    })();
+
     return () => {
       mounted = false;
     };
@@ -272,7 +314,6 @@ export function Hero() {
   // ---- wire the ScrollTrigger scrubber once frames are ready ----
   useEffect(() => {
     if (!ready) return;
-    renderScene(0);
     const st = ScrollTrigger.create({
       trigger: sectionRef.current!,
       start: "top top",
@@ -282,8 +323,19 @@ export function Hero() {
     });
     const onResize = () => renderScene(st.progress);
     window.addEventListener("resize", onResize);
-    ScrollTrigger.refresh();
+    // Draw once layout is measured. Two rAFs avoid a first paint where the
+    // canvas reports 0×0 (the frame would otherwise stay blank until a resize).
+    let raf1 = 0,
+      raf2 = 0;
+    raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        ScrollTrigger.refresh();
+        renderScene(st.progress);
+      });
+    });
     return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
       window.removeEventListener("resize", onResize);
       st.kill();
     };
