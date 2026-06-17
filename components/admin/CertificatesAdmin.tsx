@@ -96,7 +96,7 @@ export function CertificatesAdmin({ supabase }: { supabase: DB }) {
                 onChange={(e) => setEditing({ ...editing, title: e.target.value })}
               />
             </Field>
-            <Field label="Issuer">
+            <Field label="Category">
               <input
                 className={inputCls}
                 value={editing.issuer ?? ""}
@@ -148,7 +148,17 @@ export function CertificatesAdmin({ supabase }: { supabase: DB }) {
                 }
               />
             </Field>
-            <Field label="Certificate image">
+            <Field label="Image URL" className="md:col-span-2">
+              <input
+                className={inputCls}
+                placeholder="/certificates/abap.jpeg or uploaded URL"
+                value={editing.image_url ?? ""}
+                onChange={(e) =>
+                  setEditing({ ...editing, image_url: e.target.value })
+                }
+              />
+            </Field>
+            <Field label="Upload new image" className="md:col-span-2">
               <input
                 type="file"
                 accept="image/*"
@@ -157,6 +167,15 @@ export function CertificatesAdmin({ supabase }: { supabase: DB }) {
               />
             </Field>
           </div>
+
+          {editing.image_url && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={editing.image_url}
+              alt="certificate preview"
+              className="mt-4 max-h-40 rounded-xl border border-white/10 object-contain"
+            />
+          )}
 
           {msg && <p className="mt-4 text-sm text-red">{msg}</p>}
           <div className="mt-5 flex gap-3">

@@ -37,11 +37,19 @@ values
 on conflict (slug) do nothing;
 
 insert into public.certificates
-  (title, issuer, description, credential_id, verify_url, image_url, year, sort_order)
+  (title, issuer, description, verify_url, image_url, year, sort_order)
 values
-  ('SAP Certified Associate — Back-End Developer · ABAP Cloud', 'SAP',
-   'Enterprise development on SAP BTP & S/4HANA using ABAP Cloud, the RESTful Application Programming model (RAP), and CDS Views.',
-   'SAP-ABAP-CLOUD', '#', '/certs/sap-abap-cloud.jpg', '2025', 1)
+  ('SAP Certified Associate – Back-End Developer – ABAP Cloud', 'SAP Enterprise Engineering',
+   'Enterprise development using SAP BTP, S/4HANA, ABAP Cloud, RAP and CDS Views.',
+   'https://www.credly.com/badges/da0b1125-fa14-4365-b176-cdf8e2115394', '/certificates/abap.jpeg', '2025', 1),
+
+  ('Cisco Networking Basics', 'Computer Networking',
+   'Fundamentals of networking, protocols, routing, switching, connectivity and network architecture.',
+   'https://www.credly.com/badges/a82bc6dd-f671-4009-8258-877152cf7c95/public_url', '/certificates/network.jpeg', '2025', 2),
+
+  ('Certified AI-Driven Professional', 'Artificial Intelligence & Machine Learning',
+   'AI Career Accelerator program covering practical AI workflows, prompt engineering, automation and AI-driven solutions.',
+   'https://certx.in/certificate/f5fff47f-02d5-4de0-bcc8-584460628dde862711', '/certificates/aiml.jpeg', '2025', 3)
 on conflict do nothing;
 
 insert into public.settings (key, value)

@@ -4,7 +4,8 @@ import { getCertifications } from "@/lib/queries";
 
 export const metadata: Metadata = {
   title: "Certifications",
-  description: "Verified credential — SAP Certified Associate, Back-End Developer (ABAP Cloud).",
+  description:
+    "Verified credentials — SAP Certified Associate (ABAP Cloud), Cisco Networking Basics, and Certified AI-Driven Professional.",
 };
 
 export default async function CertificationsPage() {
