@@ -5,19 +5,39 @@ import { motion } from "framer-motion";
 import { FrameVideo } from "@/components/ui/FrameVideo";
 import { ProjectCard } from "./ProjectCard";
 import { ProjectModal } from "./ProjectModal";
+import { ReelCard } from "./ReelCard";
 import { cn } from "@/lib/cn";
 import {
   projectCategories,
   type Project,
   type ProjectCategory,
 } from "@/data/projects";
+import type { Reel } from "@/data/reels";
 
-export function WorksClient({ projects }: { projects: Project[] }) {
-  const [filter, setFilter] = useState<ProjectCategory | "all">("all");
+type FilterKey = ProjectCategory | "all" | "videography";
+
+const FILTERS: { key: FilterKey; label: string }[] = [
+  ...projectCategories,
+  { key: "videography", label: "Videography & Content Creation" },
+];
+
+export function WorksClient({
+  projects,
+  reels,
+}: {
+  projects: Project[];
+  reels: Reel[];
+}) {
+  const [filter, setFilter] = useState<FilterKey>("all");
   const [selected, setSelected] = useState<Project | null>(null);
 
+  const isVideography = filter === "videography";
+
   const visible = useMemo(
-    () => (filter === "all" ? projects : projects.filter((p) => p.category === filter)),
+    () =>
+      filter === "all" || filter === "videography"
+        ? projects
+        : projects.filter((p) => p.category === filter),
     [filter, projects]
   );
 
@@ -57,7 +77,7 @@ export function WorksClient({ projects }: { projects: Project[] }) {
       {/* Filters + grid */}
       <section className="relative mx-auto max-w-7xl px-6 py-16 md:px-10 md:py-24">
         <div className="mb-12 flex flex-wrap gap-2">
-          {projectCategories.map((c) => (
+          {FILTERS.map((c) => (
             <button
               key={c.key}
               type="button"
@@ -74,16 +94,57 @@ export function WorksClient({ projects }: { projects: Project[] }) {
           ))}
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          {visible.map((p, i) => (
-            <ProjectCard key={p.id} project={p} index={i} onOpen={setSelected} />
-          ))}
-        </div>
+        {isVideography ? (
+          <>
+            {/* Videography section header */}
+            <motion.div
+              key="videography-header"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="mb-12 max-w-3xl"
+            >
+              <div className="flex items-center gap-3">
+                <span className="h-px w-10 bg-gradient-to-r from-red to-blue-bright" />
+                <span className="text-label text-white/60">Reel Showcase</span>
+              </div>
+              <h2 className="mt-4 font-display text-[clamp(2rem,4.6vw,3.5rem)] uppercase leading-[0.95] text-chrome">
+                Videography &amp; Content Creation
+              </h2>
+              <p className="mt-4 text-white/60 md:text-lg">
+                Cinematic storytelling, commercial edits, social media content,
+                reels, motion graphics, promotional campaigns and creative brand
+                experiences.
+              </p>
+            </motion.div>
 
-        {visible.length === 0 && (
-          <p className="py-20 text-center font-mono text-sm uppercase tracking-[0.2em] text-white/40">
-            No projects in this category yet.
-          </p>
+            {/* Desktop 3-col · Tablet 2-col · Mobile 1-col */}
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+              {reels.map((reel, i) => (
+                <ReelCard key={reel.id} reel={reel} index={i} />
+              ))}
+            </div>
+
+            {reels.length === 0 && (
+              <p className="py-20 text-center font-mono text-sm uppercase tracking-[0.2em] text-white/40">
+                No reels published yet.
+              </p>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {visible.map((p, i) => (
+                <ProjectCard key={p.id} project={p} index={i} onOpen={setSelected} />
+              ))}
+            </div>
+
+            {visible.length === 0 && (
+              <p className="py-20 text-center font-mono text-sm uppercase tracking-[0.2em] text-white/40">
+                No projects in this category yet.
+              </p>
+            )}
+          </>
         )}
       </section>
 

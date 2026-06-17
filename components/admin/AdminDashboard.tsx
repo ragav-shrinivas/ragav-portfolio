@@ -6,15 +6,17 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
 import { cn } from "@/lib/cn";
 import { ProjectsAdmin } from "./ProjectsAdmin";
+import { ReelsAdmin } from "./ReelsAdmin";
 import { CertificatesAdmin } from "./CertificatesAdmin";
 import { SettingsAdmin } from "./SettingsAdmin";
 import { ActivityAdmin } from "./ActivityAdmin";
 
 type DB = SupabaseClient<Database>;
-type Tab = "projects" | "certificates" | "settings" | "activity";
+type Tab = "projects" | "reels" | "certificates" | "settings" | "activity";
 
 const TABS: { key: Tab; label: string }[] = [
   { key: "projects", label: "Projects" },
+  { key: "reels", label: "Reels" },
   { key: "certificates", label: "Certificates" },
   { key: "settings", label: "Media" },
   { key: "activity", label: "Activity" },
@@ -88,6 +90,7 @@ export function AdminDashboard({
 
       <div className="mt-8">
         {tab === "projects" && <ProjectsAdmin supabase={supabase} />}
+        {tab === "reels" && <ReelsAdmin supabase={supabase} />}
         {tab === "certificates" && <CertificatesAdmin supabase={supabase} />}
         {tab === "settings" && <SettingsAdmin supabase={supabase} />}
         {tab === "activity" && <ActivityAdmin supabase={supabase} />}

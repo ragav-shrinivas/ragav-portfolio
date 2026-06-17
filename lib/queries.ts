@@ -4,6 +4,7 @@ import {
   certifications as staticCerts,
   type Certification,
 } from "@/data/certifications";
+import { reels as staticReels, type Reel } from "@/data/reels";
 
 /**
  * Data access with graceful fallback: if Supabase is configured, read from it;
@@ -60,6 +61,29 @@ export async function getCertifications(): Promise<Certification[]> {
     verifyUrl: r.verify_url ?? undefined,
     imageUrl: r.image_url ?? undefined,
     year: r.year ?? "",
+    order: r.sort_order,
+  }));
+}
+
+export async function getReels(): Promise<Reel[]> {
+  const supabase = await createClient();
+  if (!supabase) return staticReels;
+
+  const { data, error } = await supabase
+    .from("reels")
+    .select("*")
+    .order("sort_order", { ascending: true });
+
+  if (error || !data?.length) return staticReels;
+
+  return data.map((r) => ({
+    id: r.id,
+    title: r.title,
+    tag: r.tag ?? "",
+    description: r.description ?? "",
+    instagramUrl: r.instagram_url ?? "",
+    videoUrl: r.video_url ?? "",
+    accent: (r.accent ?? "red") as "red" | "blue",
     order: r.sort_order,
   }));
 }

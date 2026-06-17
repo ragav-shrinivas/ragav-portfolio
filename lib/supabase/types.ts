@@ -57,6 +57,24 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["certificates"]["Row"]>;
         Relationships: [];
       };
+      reels: {
+        Row: {
+          id: string;
+          title: string;
+          tag: string | null;
+          description: string | null;
+          instagram_url: string | null;
+          video_url: string | null;
+          accent: "red" | "blue" | null;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["reels"]["Row"]> & {
+          title: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["reels"]["Row"]>;
+        Relationships: [];
+      };
       settings: {
         Row: {
           key: string;
