@@ -100,6 +100,17 @@ export interface Database {
         Update: Partial<Database["public"]["Tables"]["admin_logs"]["Row"]>;
         Relationships: [];
       };
+      site_content: {
+        Row: {
+          key: string;
+          value: string;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: { key: string; value: string; updated_by?: string | null };
+        Update: Partial<Database["public"]["Tables"]["site_content"]["Row"]>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

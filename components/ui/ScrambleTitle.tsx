@@ -1,28 +1,47 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
+import { useEdit } from "@/components/edit/EditProvider";
+import { Editable } from "@/components/edit/Editable";
 
 const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/<>#*";
 
 /**
  * Cycles through `titles`, transitioning with a brief character-scramble
  * (decode) effect plus a glow pulse — a Tony-Stark-HUD style rotating role.
+ *
+ * When `idPrefix` is given, each role becomes live-editable: overrides from the
+ * editor feed the scramble, and in edit mode the roles render as an inline
+ * editable list so the admin can rewrite each one in place.
  */
 export function ScrambleTitle({
   titles,
+  idPrefix,
   className,
   hold = 2200,
   scrambleMs = 600,
 }: {
   titles: string[];
+  idPrefix?: string;
   className?: string;
   hold?: number;
   scrambleMs?: number;
 }) {
-  const [display, setDisplay] = useState(titles[0]);
+  const { editMode, isAdmin, get } = useEdit();
+
+  // Apply any saved overrides so the scramble cycles the edited words.
+  const effective = useMemo(
+    () => (idPrefix ? titles.map((t, i) => get(`${idPrefix}.${i}`, t)) : titles),
+    [titles, idPrefix, get]
+  );
+  const effectiveKey = effective.join("|");
+
+  const [display, setDisplay] = useState(effective[0]);
   const [pulsing, setPulsing] = useState(false);
   const indexRef = useRef(0);
+  const displayRef = useRef(display);
+  displayRef.current = display;
 
   useEffect(() => {
     const reduce =
@@ -40,7 +59,7 @@ export function ScrambleTitle({
       }
       setPulsing(true);
       const start = performance.now();
-      const prev = display;
+      const prev = displayRef.current;
       const len = Math.max(target.length, prev.length);
 
       const tick = (now: number) => {
@@ -68,8 +87,8 @@ export function ScrambleTitle({
 
     const scheduleNext = () => {
       timeout = setTimeout(() => {
-        indexRef.current = (indexRef.current + 1) % titles.length;
-        scrambleTo(titles[indexRef.current]);
+        indexRef.current = (indexRef.current + 1) % effective.length;
+        scrambleTo(effective[indexRef.current]);
       }, hold);
     };
 
@@ -80,7 +99,30 @@ export function ScrambleTitle({
       clearTimeout(timeout);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [titles, hold, scrambleMs]);
+  }, [effectiveKey, hold, scrambleMs]);
+
+  // Edit mode: expose every role as an inline editable chip.
+  if (idPrefix && editMode && isAdmin) {
+    return (
+      <span
+        className={cn(
+          "inline-flex flex-wrap items-center gap-x-1.5 gap-y-1 font-mono",
+          className
+        )}
+      >
+        {titles.map((t, i) => (
+          <span key={i} className="inline-flex items-center">
+            <Editable id={`${idPrefix}.${i}`} as="span" className="text-blue">
+              {t}
+            </Editable>
+            {i < titles.length - 1 && (
+              <span className="ml-1.5 text-white/25">·</span>
+            )}
+          </span>
+        ))}
+      </span>
+    );
+  }
 
   return (
     <span

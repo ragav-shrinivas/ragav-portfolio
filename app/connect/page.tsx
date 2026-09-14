@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Reveal } from "@/components/ui/Reveal";
 import { ContactForm } from "@/components/connect/ContactForm";
+import { Editable } from "@/components/edit/Editable";
 import { siteConfig } from "@/lib/config";
 
 export const metadata: Metadata = {
@@ -24,16 +25,23 @@ export default function ConnectPage() {
 
       <section className="relative mx-auto max-w-6xl px-6 pt-40 pb-28 md:px-10 md:pt-48">
         <Reveal>
-          <p className="text-label text-blue">Connect</p>
+          <Editable id="connect.kicker" as="p" className="text-label text-blue">
+            Connect
+          </Editable>
           <h1 className="mt-4 font-display text-[clamp(3rem,9vw,8rem)] uppercase leading-[0.9] text-chrome">
-            Let&apos;s build
+            <Editable id="connect.h1.line1" as="span">Let&apos;s build</Editable>
             <br />
-            <span className="text-plasma">something alive</span>
+            <Editable id="connect.h1.line2" as="span" className="text-plasma">
+              something alive
+            </Editable>
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/60">
-            Whether it&apos;s an AI system, a production website, or a cinematic
-            brand experience — I&apos;d love to hear what you&apos;re building.
-          </p>
+          <Editable
+            id="connect.subtitle"
+            as="p"
+            className="mt-6 max-w-xl text-lg leading-relaxed text-white/60"
+          >
+            Whether it&apos;s an AI system, a production website, or a cinematic brand experience — I&apos;d love to hear what you&apos;re building.
+          </Editable>
         </Reveal>
 
         <div className="mt-14 grid gap-8 lg:grid-cols-[1fr_1.3fr] lg:items-start">
@@ -47,7 +55,13 @@ export default function ConnectPage() {
                   className="energy-border hover-lift glass group flex items-center justify-between rounded-2xl p-6 md:p-7"
                 >
                   <div>
-                    <p className="text-label text-white/45">{c.label}</p>
+                    <Editable
+                      id={`connect.channel.${c.label}.label`}
+                      as="p"
+                      className="text-label text-white/45"
+                    >
+                      {c.label}
+                    </Editable>
                     <p className="mt-2 text-lg font-semibold text-white md:text-xl">
                       {c.value}
                     </p>

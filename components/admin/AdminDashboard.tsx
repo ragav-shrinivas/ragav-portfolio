@@ -16,7 +16,7 @@ type Tab = "projects" | "reels" | "certificates" | "settings" | "activity";
 
 const TABS: { key: Tab; label: string }[] = [
   { key: "projects", label: "Projects" },
-  { key: "reels", label: "Reels" },
+  { key: "reels", label: "Videography" },
   { key: "certificates", label: "Certificates" },
   { key: "settings", label: "Media" },
   { key: "activity", label: "Activity" },
@@ -69,6 +69,23 @@ export function AdminDashboard({
           </button>
         </div>
       </header>
+
+      {/* Live editor hint */}
+      <div className="mt-6 flex flex-col gap-2 rounded-2xl border border-white/8 bg-white/[0.03] p-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm text-white/60">
+          <span className="font-semibold text-white">Tip:</span> to edit headings &amp;
+          paragraphs directly on the site, open it while signed in and use the{" "}
+          <span className="text-blue">Edit page</span> button (bottom-left), then click any
+          text to rewrite it.
+        </p>
+        <a
+          href="/"
+          target="_blank"
+          className="shrink-0 rounded-xl border border-blue/30 bg-blue/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-blue transition-colors hover:bg-blue/20"
+        >
+          Open site to edit ↗
+        </a>
+      </div>
 
       {/* Tabs */}
       <nav className="mt-6 flex gap-2 overflow-x-auto pb-1">

@@ -4,7 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
 import { uploadFile, logAction } from "@/lib/admin";
-import { Btn, Card, Field, inputCls } from "./ui";
+import { cn } from "@/lib/cn";
+import { Btn, Card, Field, inputCls, Guide } from "./ui";
 
 type DB = SupabaseClient<Database>;
 type Row = Database["public"]["Tables"]["reels"]["Row"];
@@ -82,25 +83,39 @@ export function ReelsAdmin({ supabase }: { supabase: DB }) {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-2xl uppercase text-white">Reels</h2>
+        <h2 className="font-display text-2xl uppercase text-white">
+          Videography &amp; Reels
+        </h2>
         <Btn variant="primary" onClick={() => startEdit(blank())}>
           + New Reel
         </Btn>
       </div>
 
+      <Guide
+        title="Add a videography reel"
+        where="The Works page (/works) under the “Videography & Content Creation” filter — a video card that plays your preview and links out to the Instagram Reel."
+        points={[
+          "Upload a short preview video (mp4) — it plays inline on the card. Vertical/portrait works great.",
+          "Instagram link is where “View on Instagram” sends viewers (the full reel).",
+          "Category tag is the small label (e.g. “Commercial”, “Cinematic”, “Motion”).",
+          "Accent sets the card's glow colour — red or blue.",
+        ]}
+      />
+
       {editing && (
         <Card className="energy-border">
           <div className="grid gap-4 md:grid-cols-2">
-            <Field label="Title">
+            <Field label="Title" required hint="Reel name shown on the card.">
               <input
                 className={inputCls}
                 value={editing.title ?? ""}
                 onChange={(e) => setEditing({ ...editing, title: e.target.value })}
               />
             </Field>
-            <Field label="Category tag">
+            <Field label="Category tag" hint="Small label, e.g. “Commercial”, “Motion”.">
               <input
                 className={inputCls}
+                placeholder="Cinematic"
                 value={editing.tag ?? ""}
                 onChange={(e) => setEditing({ ...editing, tag: e.target.value })}
               />
@@ -115,7 +130,11 @@ export function ReelsAdmin({ supabase }: { supabase: DB }) {
                 }
               />
             </Field>
-            <Field label="Instagram link" className="md:col-span-2">
+            <Field
+              label="Instagram link"
+              hint="The full reel — “View on Instagram” links here."
+              className="md:col-span-2"
+            >
               <input
                 className={inputCls}
                 placeholder="https://www.instagram.com/reel/..."
@@ -135,7 +154,11 @@ export function ReelsAdmin({ supabase }: { supabase: DB }) {
                 }
               />
             </Field>
-            <Field label="Upload preview video (mp4)" className="md:col-span-2">
+            <Field
+              label="Upload preview video (mp4)"
+              hint="Plays inline on the card. Keep it short (a few seconds)."
+              className="md:col-span-2"
+            >
               <input
                 type="file"
                 accept="video/*"
@@ -185,38 +208,61 @@ export function ReelsAdmin({ supabase }: { supabase: DB }) {
         </Card>
       )}
 
-      <div className="space-y-3">
-        {rows.map((r) => (
-          <Card key={r.id} className="flex items-center justify-between gap-4">
-            <div className="min-w-0">
-              <div className="flex items-center gap-3">
+      <div>
+        <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">
+          {rows.length} live on your site
+        </p>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+          {rows.map((r) => (
+            <div
+              key={r.id}
+              className="group glass overflow-hidden rounded-2xl border border-white/8"
+            >
+              <div className="relative aspect-[9/12] overflow-hidden bg-black/40">
+                {r.video_url ? (
+                  <video
+                    src={r.video_url}
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    className="h-full w-full object-cover"
+                    onMouseEnter={(e) => e.currentTarget.play().catch(() => {})}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.pause();
+                      e.currentTarget.currentTime = 0;
+                    }}
+                  />
+                ) : (
+                  <div className="grid h-full place-items-center font-mono text-[10px] uppercase tracking-[0.2em] text-white/25">
+                    No video
+                  </div>
+                )}
+                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/60 opacity-0 backdrop-blur-sm transition-opacity duration-200 group-hover:opacity-100">
+                  <Btn onClick={() => startEdit(r)}>Edit</Btn>
+                  <Btn variant="danger" onClick={() => remove(r)}>Delete</Btn>
+                </div>
                 <span
-                  className={
-                    r.accent === "blue"
-                      ? "h-2 w-2 rounded-full bg-blue-bright"
-                      : "h-2 w-2 rounded-full bg-red"
-                  }
-                />
-                <span className="truncate font-semibold text-white">
-                  {r.title}
-                </span>
-                <span className="font-mono text-[10px] uppercase text-white/35">
-                  #{r.sort_order}
+                  className={cn(
+                    "absolute left-2 top-2 rounded-full px-2 py-0.5 font-mono text-[9px] uppercase text-white",
+                    r.accent === "blue" ? "bg-blue/70" : "bg-red/70"
+                  )}
+                >
+                  {r.tag || "Reel"}
                 </span>
               </div>
-              <p className="mt-1 truncate text-xs text-white/40">{r.tag}</p>
+              <div className="p-3">
+                <p className="truncate text-sm font-semibold text-white">{r.title}</p>
+                <p className="mt-0.5 truncate text-[11px] text-white/40">
+                  {r.instagram_url ? "Instagram linked" : "No IG link"}
+                </p>
+              </div>
             </div>
-            <div className="flex shrink-0 gap-2">
-              <Btn onClick={() => startEdit(r)}>Edit</Btn>
-              <Btn variant="danger" onClick={() => remove(r)}>
-                Delete
-              </Btn>
-            </div>
-          </Card>
-        ))}
+          ))}
+        </div>
         {rows.length === 0 && (
           <p className="py-10 text-center font-mono text-xs uppercase tracking-[0.2em] text-white/35">
-            No reels yet
+            No reels yet — click “+ New Reel” to add your first.
           </p>
         )}
       </div>

@@ -5,10 +5,19 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
+/**
+ * Password-only gate. The visitor types a short access code; the app exchanges
+ * it for the real Supabase session behind the scenes (so row-level security
+ * still protects every write). The code is checked client-side, so treat it as
+ * a soft gate — change ADMIN_CODE for something longer for stronger security.
+ */
+const ADMIN_CODE = "2525";
+const ADMIN_EMAIL = "admin@evo9.portfolio";
+const ADMIN_SECRET = "evo9-portfolio-2525";
+
 export default function AdminLogin() {
   const router = useRouter();
   const supabase = createClient();
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -23,9 +32,17 @@ export default function AdminLogin() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!supabase) return;
-    setBusy(true);
     setError(null);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (password.trim() !== ADMIN_CODE) {
+      return setError("Incorrect password.");
+    }
+
+    setBusy(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: ADMIN_EMAIL,
+      password: ADMIN_SECRET,
+    });
     setBusy(false);
     if (error) return setError(error.message);
     router.replace("/admin/dashboard");
@@ -62,23 +79,16 @@ export default function AdminLogin() {
         ) : (
           <form onSubmit={onSubmit} className="mt-8 space-y-4">
             <div>
-              <label className="text-label text-white/45">Email</label>
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition-colors focus:border-blue"
-              />
-            </div>
-            <div>
               <label className="text-label text-white/45">Password</label>
               <input
                 type="password"
                 required
+                autoFocus
+                inputMode="numeric"
+                placeholder="Enter access code"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none transition-colors focus:border-blue"
+                className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-center text-lg tracking-[0.4em] text-white outline-none transition-colors focus:border-blue placeholder:text-sm placeholder:tracking-normal placeholder:text-white/25"
               />
             </div>
 

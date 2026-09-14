@@ -5,6 +5,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { DepthSection } from "@/components/ui/DepthSection";
 import { ParticleField } from "@/components/ui/ParticleField";
 import { TiltCard } from "@/components/ui/TiltCard";
+import { Editable } from "@/components/edit/Editable";
 import { founder } from "@/data/founder";
 
 export function FounderSection() {
@@ -19,11 +20,17 @@ export function FounderSection() {
         <Reveal>
           <div className="flex items-center gap-4">
             <span className="h-px w-10 bg-gradient-to-r from-blue-bright to-red" />
-            <span className="text-label text-white/60">{kicker}</span>
+            <Editable id="founder.kicker" as="span" className="text-label text-white/60">
+              {kicker}
+            </Editable>
           </div>
-          <h2 className="mt-5 max-w-2xl font-display text-[clamp(2.4rem,5vw,4.5rem)] uppercase leading-[0.95] text-chrome">
+          <Editable
+            id="founder.subtitle"
+            as="h2"
+            className="mt-5 max-w-2xl font-display text-[clamp(2.4rem,5vw,4.5rem)] uppercase leading-[0.95] text-chrome"
+          >
             {subtitle}
-          </h2>
+          </Editable>
         </Reveal>
 
         <DepthSection className="mt-14">
@@ -57,23 +64,41 @@ export function FounderSection() {
                 {/* Copy */}
                 <div style={{ transform: "translateZ(30px)" }}>
                   <div className="flex items-center gap-3">
-                    <h3 className="font-display text-5xl uppercase tracking-wide text-plasma md:text-7xl">
+                    <Editable
+                      id="founder.venture.title"
+                      as="h3"
+                      className="font-display text-5xl uppercase tracking-wide text-plasma md:text-7xl"
+                    >
                       {venture.title}
-                    </h3>
-                    <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-white/60">
+                    </Editable>
+                    <Editable
+                      id="founder.venture.badge"
+                      as="span"
+                      className="rounded-full border border-white/15 bg-white/5 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.16em] text-white/60"
+                    >
                       Startup
-                    </span>
+                    </Editable>
                   </div>
-                  <p className="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-white/45">
+                  <Editable
+                    id="founder.venture.descriptor"
+                    as="p"
+                    className="mt-2 font-mono text-xs uppercase tracking-[0.2em] text-white/45"
+                  >
                     {venture.descriptor}
-                  </p>
+                  </Editable>
 
-                  <p className="mt-6 max-w-xl text-base leading-relaxed text-white/75 md:text-lg">
+                  <Editable
+                    id="founder.venture.description"
+                    as="p"
+                    className="mt-6 max-w-xl text-base leading-relaxed text-white/75 md:text-lg"
+                  >
                     {venture.description}
-                  </p>
+                  </Editable>
 
                   <span className="mt-8 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-white transition-colors group-hover:text-blue">
-                    Explore EVO9
+                    <Editable id="founder.venture.cta" as="span">
+                      Explore EVO9
+                    </Editable>
                     <span className="transition-transform duration-500 group-hover:translate-x-1.5">→</span>
                   </span>
                 </div>

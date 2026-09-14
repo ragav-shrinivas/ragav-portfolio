@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { Editable } from "@/components/edit/Editable";
 import { siteConfig } from "@/lib/config";
 
 export function Footer() {
@@ -55,10 +56,16 @@ export function Footer() {
       <div className="relative mx-auto max-w-7xl px-6 py-20 md:px-10">
         <div className="flex flex-col gap-12 md:flex-row md:items-end md:justify-between">
           <div className="max-w-md">
-            <p className="text-label text-blue">Let&apos;s build the future</p>
-            <h2 className="mt-4 font-display text-5xl uppercase text-chrome md:text-6xl">
+            <Editable id="footer.label" as="p" className="text-label text-blue">
+              Let&apos;s build the future
+            </Editable>
+            <Editable
+              id="footer.title"
+              as="h2"
+              className="mt-4 font-display text-5xl uppercase text-chrome md:text-6xl"
+            >
               Start a project
-            </h2>
+            </Editable>
             <div className="mt-6 space-y-2">
               <a
                 href={`mailto:${siteConfig.email}`}
@@ -104,9 +111,13 @@ export function Footer() {
             <img src="/evo9.png" alt="" className="h-5 w-auto grayscale" />
           </button>
 
-          <p className="font-mono uppercase tracking-[0.2em]">
+          <Editable
+            id="footer.tagline"
+            as="p"
+            className="font-mono uppercase tracking-[0.2em]"
+          >
             Engineered with intelligence
-          </p>
+          </Editable>
         </div>
       </div>
     </footer>

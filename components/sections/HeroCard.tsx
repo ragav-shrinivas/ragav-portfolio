@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { Editable } from "@/components/edit/Editable";
 
 export interface HeroCardData {
   index: string;
@@ -71,18 +72,22 @@ export function HeroCard({ data }: { data: HeroCardData }) {
         />
       </div>
 
-      <h3
+      <Editable
+        id={`hero.card.${data.index}.title`}
+        as="h3"
         className="relative z-10 mt-4 font-display text-xl uppercase leading-tight tracking-wide text-white md:text-2xl"
         style={{ transform: "translateZ(30px)" }}
       >
         {data.title}
-      </h3>
-      <p
+      </Editable>
+      <Editable
+        id={`hero.card.${data.index}.text`}
+        as="p"
         className="relative z-10 mt-2.5 text-[13px] leading-relaxed text-white/60"
         style={{ transform: "translateZ(18px)" }}
       >
         {data.text}
-      </p>
+      </Editable>
     </motion.div>
   );
 }

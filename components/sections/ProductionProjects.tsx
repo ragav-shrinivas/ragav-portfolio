@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Reveal } from "@/components/ui/Reveal";
+import { Editable } from "@/components/edit/Editable";
 import { projects } from "@/data/projects";
 
 const sites = projects.filter((p) => p.category === "website");
@@ -15,11 +16,17 @@ export function ProductionProjects() {
         <Reveal>
           <div className="flex items-center gap-4">
             <span className="h-px w-10 bg-gradient-to-r from-red to-blue-bright" />
-            <span className="text-label text-white/60">In Production</span>
+            <Editable id="production.kicker" as="span" className="text-label text-white/60">
+              In Production
+            </Editable>
           </div>
-          <h2 className="mt-5 max-w-3xl font-display text-[clamp(2.2rem,4.8vw,4rem)] uppercase leading-[0.95] text-chrome">
+          <Editable
+            id="production.title"
+            as="h2"
+            className="mt-5 max-w-3xl font-display text-[clamp(2.2rem,4.8vw,4rem)] uppercase leading-[0.95] text-chrome"
+          >
             Client Websites Shipped To Production
-          </h2>
+          </Editable>
         </Reveal>
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2">

@@ -6,6 +6,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ParticleField } from "@/components/ui/ParticleField";
 import { ScrambleTitle } from "@/components/ui/ScrambleTitle";
 import { HeroCard, type HeroCardData } from "@/components/sections/HeroCard";
+import { HeroQuickAccess } from "@/components/sections/HeroQuickAccess";
+import { Editable } from "@/components/edit/Editable";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -184,7 +186,11 @@ export function Hero() {
       };
 
       // Greeting — visible at rest, drifts up & out before cards begin
-      set(greetRef.current, 1 - ramp(p, 0.16, 0.23), 0, -ramp(p, 0.06, 0.23) * 70);
+      const greetOp = 1 - ramp(p, 0.16, 0.23);
+      set(greetRef.current, greetOp, 0, -ramp(p, 0.06, 0.23) * 70);
+      // Only let the greeting (incl. quick-access links) capture clicks while visible.
+      if (greetRef.current)
+        greetRef.current.style.pointerEvents = greetOp > 0.15 ? "auto" : "none";
 
       // Continuous bob shared by held cards (keeps motion alive during holds)
       const bob = (i: number) => Math.sin(p * 46 + i * 1.1) * 4;
@@ -441,28 +447,39 @@ export function Hero() {
             ref={greetInnerRef}
             className="flex flex-col items-center rounded-3xl bg-base/25 p-5 backdrop-blur-[3px] will-change-transform md:bg-transparent md:p-0 md:backdrop-blur-0"
           >
-            <span className="text-label mb-3 text-blue md:mb-4">
+            {/* Quick-access cards — key sections reachable from the first screen */}
+            <HeroQuickAccess />
+
+            <Editable id="hero.welcome" as="span" className="text-label mb-3 text-blue md:mb-4">
               Welcome to my digital mind
-            </span>
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-white/55 md:text-sm">
+            </Editable>
+            <Editable
+              id="hero.hi"
+              as="p"
+              className="font-mono text-xs uppercase tracking-[0.3em] text-white/55 md:text-sm"
+            >
               Hi, I&apos;m
-            </p>
-            <h1
+            </Editable>
+            <Editable
+              id="hero.name"
+              as="h1"
               className="mask-reveal mt-2 font-display text-[clamp(2.4rem,11vw,8rem)] uppercase leading-[0.9] tracking-[0.04em] text-chrome glow-white"
-              style={{ ["--ls" as string]: "0.04em" }}
+              style={{ ["--ls" as string]: "0.04em" } as React.CSSProperties}
             >
               H Ragav Shrinivas
-            </h1>
+            </Editable>
             <div className="mt-4 flex items-center gap-3 text-[clamp(0.95rem,4vw,1.7rem)] font-semibold uppercase tracking-[0.1em]">
               <span className="h-px w-5 bg-gradient-to-r from-transparent to-blue-bright md:w-6" />
-              <ScrambleTitle titles={ROLES} />
+              <ScrambleTitle titles={ROLES} idPrefix="hero.role" />
               <span className="h-px w-5 bg-gradient-to-l from-transparent to-red md:w-6" />
             </div>
-            <p className="mt-5 max-w-md text-[13px] leading-relaxed text-white/65 md:mt-6 md:max-w-2xl md:text-base">
-              Build intelligent systems, immersive experiences, scalable
-              applications and creative digital products — bridging software
-              engineering, AI, enterprise technology and cinematic content.
-            </p>
+            <Editable
+              id="hero.intro"
+              as="p"
+              className="mt-5 max-w-md text-[13px] leading-relaxed text-white/65 md:mt-6 md:max-w-2xl md:text-base"
+            >
+              I build intelligent systems, immersive experiences, scalable applications and creative digital products — bridging software engineering, AI, enterprise technology and cinematic content.
+            </Editable>
           </div>
         </div>
 
@@ -508,13 +525,23 @@ export function Hero() {
           ref={closingRef}
           className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center px-6 text-center opacity-0"
         >
-          <p className="text-label text-blue">The operating system is live</p>
-          <h2 className="mt-4 font-display text-[clamp(2.2rem,7vw,5rem)] uppercase leading-[0.95] text-chrome">
+          <Editable id="hero.closing.label" as="p" className="text-label text-blue">
+            The operating system is live
+          </Editable>
+          <Editable
+            id="hero.closing.title"
+            as="h2"
+            className="mt-4 font-display text-[clamp(2.2rem,7vw,5rem)] uppercase leading-[0.95] text-chrome"
+          >
             Enter the work
-          </h2>
-          <span className="mt-6 font-mono text-xs uppercase tracking-[0.25em] text-white/50">
+          </Editable>
+          <Editable
+            id="hero.closing.hint"
+            as="span"
+            className="mt-6 font-mono text-xs uppercase tracking-[0.25em] text-white/50"
+          >
             Keep scrolling ↓
-          </span>
+          </Editable>
         </div>
 
         {/* Scroll cue */}
@@ -522,7 +549,9 @@ export function Hero() {
           ref={cueRef}
           className="absolute inset-x-0 bottom-16 z-30 flex flex-col items-center gap-2 md:bottom-14"
         >
-          <span className="text-label text-white/40">Scroll to begin →</span>
+          <Editable id="hero.scrollcue" as="span" className="text-label text-white/40">
+            Scroll to begin →
+          </Editable>
           <div className="h-9 w-px overflow-hidden bg-white/15">
             <div className="h-1/2 w-full animate-[scan_1.8s_ease-in-out_infinite] bg-gradient-to-b from-red to-transparent" />
           </div>

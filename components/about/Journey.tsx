@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Reveal } from "@/components/ui/Reveal";
+import { Editable } from "@/components/edit/Editable";
 import { cn } from "@/lib/cn";
 import { journey, stats, creativeRoles, creativeSummary } from "@/data/about";
 import { siteConfig } from "@/lib/config";
@@ -23,18 +24,23 @@ export function Journey() {
         <div className="pointer-events-none absolute left-0 top-40 h-[30rem] w-[30rem] rounded-full bg-[radial-gradient(circle,rgba(59,130,246,0.22),transparent_70%)] blur-[110px]" />
         <div className="relative mx-auto max-w-5xl px-6 md:px-10">
           <Reveal>
-            <p className="text-label text-blue">The Journey</p>
+            <Editable id="about.kicker" as="p" className="text-label text-blue">
+              The Journey
+            </Editable>
             <h1 className="mt-4 font-display text-[clamp(3rem,9vw,8rem)] uppercase leading-[0.9] text-chrome">
-              One mind,
+              <Editable id="about.h1.line1" as="span">One mind,</Editable>
               <br />
-              <span className="text-plasma">six disciplines</span>
+              <Editable id="about.h1.line2" as="span" className="text-plasma">
+                six disciplines
+              </Editable>
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/60">
-              Ragav engineers across the full spectrum — from neural networks and
-              enterprise SAP systems to cinematic interfaces and 3D motion. Every
-              layer of the stack, unified by a single obsession: building software
-              that feels alive.
-            </p>
+            <Editable
+              id="about.intro"
+              as="p"
+              className="mt-6 max-w-2xl text-lg leading-relaxed text-white/60"
+            >
+              I engineer across the full spectrum — from neural networks and enterprise SAP systems to cinematic interfaces and 3D motion. Every layer of the stack, unified by a single obsession: building software that feels alive.
+            </Editable>
           </Reveal>
 
           {/* Stats */}
@@ -42,10 +48,20 @@ export function Journey() {
             {stats.map((s, i) => (
               <Reveal key={s.label} delay={i * 0.08}>
                 <div className="glass rounded-2xl p-5 text-center">
-                  <div className="font-display text-4xl text-plasma">{s.value}</div>
-                  <div className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-white/45">
+                  <Editable
+                    id={`about.stat.${s.label}.value`}
+                    as="div"
+                    className="font-display text-4xl text-plasma"
+                  >
+                    {s.value}
+                  </Editable>
+                  <Editable
+                    id={`about.stat.${s.label}.label`}
+                    as="div"
+                    className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-white/45"
+                  >
                     {s.label}
-                  </div>
+                  </Editable>
                 </div>
               </Reveal>
             ))}
@@ -57,18 +73,26 @@ export function Journey() {
       <section className="relative mx-auto max-w-5xl px-6 py-12 md:px-10">
         <Reveal>
           <div className="glass energy-border rounded-3xl p-8 md:p-10">
-            <p className="text-label text-red">Beyond Engineering</p>
-            <p className="mt-5 max-w-3xl text-lg leading-relaxed text-white/70">
+            <Editable id="about.beyond.kicker" as="p" className="text-label text-red">
+              Beyond Engineering
+            </Editable>
+            <Editable
+              id="about.beyond.summary"
+              as="p"
+              className="mt-5 max-w-3xl text-lg leading-relaxed text-white/70"
+            >
               {creativeSummary}
-            </p>
+            </Editable>
             <div className="mt-7 flex flex-wrap gap-2.5">
               {creativeRoles.map((role) => (
-                <span
+                <Editable
                   key={role}
+                  id={`about.role.${role}`}
+                  as="span"
                   className="rounded-full border border-white/10 bg-white/5 px-4 py-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white/65"
                 >
                   {role}
-                </span>
+                </Editable>
               ))}
             </div>
           </div>
@@ -116,21 +140,37 @@ export function Journey() {
 
                 <Reveal from={left ? "right" : "left"}>
                   <div className="glass energy-border hover-lift rounded-2xl p-6 md:p-7">
-                    <span className="text-label text-white/45">{node.period}</span>
-                    <h3 className="mt-3 font-display text-2xl uppercase text-white md:text-3xl">
+                    <Editable
+                      id={`about.node.${node.id}.period`}
+                      as="span"
+                      className="text-label text-white/45"
+                    >
+                      {node.period}
+                    </Editable>
+                    <Editable
+                      id={`about.node.${node.id}.title`}
+                      as="h3"
+                      className="mt-3 font-display text-2xl uppercase text-white md:text-3xl"
+                    >
                       {node.title}
-                    </h3>
-                    <p
+                    </Editable>
+                    <Editable
+                      id={`about.node.${node.id}.org`}
+                      as="p"
                       className={cn(
                         "mt-1 font-mono text-xs uppercase tracking-[0.14em]",
                         node.accent === "red" ? "text-red" : "text-blue"
                       )}
                     >
                       {node.org}
-                    </p>
-                    <p className="mt-4 text-sm leading-relaxed text-white/55">
+                    </Editable>
+                    <Editable
+                      id={`about.node.${node.id}.description`}
+                      as="p"
+                      className="mt-4 text-sm leading-relaxed text-white/55"
+                    >
                       {node.description}
-                    </p>
+                    </Editable>
                   </div>
                 </Reveal>
               </div>
@@ -142,9 +182,13 @@ export function Journey() {
       {/* CTA */}
       <section className="border-t border-white/5 py-24 text-center">
         <Reveal>
-          <h2 className="font-display text-[clamp(2.4rem,6vw,5rem)] uppercase text-chrome">
+          <Editable
+            id="about.cta.title"
+            as="h2"
+            className="font-display text-[clamp(2.4rem,6vw,5rem)] uppercase text-chrome"
+          >
             Let&apos;s build something alive
-          </h2>
+          </Editable>
           <a
             href={`mailto:${siteConfig.email}`}
             className="energy-border mt-8 inline-block rounded-full bg-white/5 px-8 py-4 text-sm font-semibold uppercase tracking-[0.16em] text-white transition-all hover:bg-white/10"

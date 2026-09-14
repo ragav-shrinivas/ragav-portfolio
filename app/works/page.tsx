@@ -5,7 +5,7 @@ import { getProjects, getReels } from "@/lib/queries";
 export const metadata: Metadata = {
   title: "Works",
   description:
-    "Machine-learning systems, production websites and videography by Ragav — ML Monitor, Entropy Tipping Point Prediction, Aviate Gym, Geetham Silks, ALP Astrology, and creative reels.",
+    "Machine-learning systems, production websites and videography I've built — ML Monitor, Entropy Tipping Point Prediction, Aviate Gym, Geetham Silks, ALP Astrology, and creative reels.",
 };
 
 export default async function WorksPage() {

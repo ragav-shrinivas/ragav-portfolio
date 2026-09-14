@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Reveal } from "@/components/ui/Reveal";
+import { Editable } from "@/components/edit/Editable";
 import { cn } from "@/lib/cn";
 import type { StorySection as Story } from "@/data/story";
 
@@ -42,12 +43,20 @@ export function StorySection({ data }: { data: Story }) {
               <span className="h-px w-10 bg-gradient-to-r from-blue-bright to-red" />
               <span className="text-label text-white/60">{data.kicker}</span>
             </div>
-            <h2 className="mt-6 max-w-xl font-display text-[clamp(2.2rem,4.5vw,4rem)] uppercase leading-[0.95] text-chrome">
+            <Editable
+              id={`story.${data.id}.title`}
+              as="h2"
+              className="mt-6 max-w-xl font-display text-[clamp(2.2rem,4.5vw,4rem)] uppercase leading-[0.95] text-chrome"
+            >
               {data.title}
-            </h2>
-            <p className="mt-6 max-w-md text-base leading-relaxed text-white/55 md:text-lg">
+            </Editable>
+            <Editable
+              id={`story.${data.id}.description`}
+              as="p"
+              className="mt-6 max-w-md text-base leading-relaxed text-white/55 md:text-lg"
+            >
               {data.description}
-            </p>
+            </Editable>
           </Reveal>
         </div>
 
@@ -61,12 +70,20 @@ export function StorySection({ data }: { data: Story }) {
               <div className="energy-border hover-lift glass group rounded-2xl p-6 md:p-7">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-xl font-semibold text-white md:text-2xl">
+                    <Editable
+                      id={`story.${data.id}.card.${i}.title`}
+                      as="h3"
+                      className="text-xl font-semibold text-white md:text-2xl"
+                    >
                       {card.title}
-                    </h3>
-                    <p className="mt-2 font-mono text-xs uppercase tracking-[0.18em] text-white/40">
+                    </Editable>
+                    <Editable
+                      id={`story.${data.id}.card.${i}.meta`}
+                      as="p"
+                      className="mt-2 font-mono text-xs uppercase tracking-[0.18em] text-white/40"
+                    >
                       {card.meta}
-                    </p>
+                    </Editable>
                   </div>
                   <span
                     className={cn(

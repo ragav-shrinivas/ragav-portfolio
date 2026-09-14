@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ParticleField } from "@/components/ui/ParticleField";
+import { Editable } from "@/components/edit/Editable";
 import { cn } from "@/lib/cn";
 import type { Certification } from "@/data/certifications";
 
@@ -228,7 +229,7 @@ export function CertGallery({ certs }: { certs: Certification[] }) {
           transition={{ duration: 0.8 }}
           className="text-label relative text-blue"
         >
-          Verified Credentials
+          <Editable id="certs.kicker" as="span">Verified Credentials</Editable>
         </motion.p>
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
@@ -236,12 +237,15 @@ export function CertGallery({ certs }: { certs: Certification[] }) {
           transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
           className="relative mt-4 font-display text-[clamp(3rem,9vw,8rem)] uppercase leading-[0.9] text-chrome"
         >
-          Certifications
+          <Editable id="certs.title" as="span">Certifications</Editable>
         </motion.h1>
-        <p className="relative mx-auto mt-5 max-w-xl px-6 text-white/55">
-          Enterprise engineering, networking and AI — each credential
-          independently verifiable.
-        </p>
+        <Editable
+          id="certs.subtitle"
+          as="p"
+          className="relative mx-auto mt-5 max-w-xl px-6 text-white/55"
+        >
+          Enterprise engineering, networking and AI — each credential independently verifiable.
+        </Editable>
       </header>
 
       <section className="relative mx-auto max-w-6xl overflow-hidden px-6 py-16 md:px-10 md:py-24">

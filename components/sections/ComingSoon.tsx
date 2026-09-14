@@ -8,6 +8,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { Reveal } from "@/components/ui/Reveal";
+import { Editable } from "@/components/edit/Editable";
 import { cn } from "@/lib/cn";
 
 type Accent = "red" | "blue";
@@ -193,22 +194,34 @@ export function ComingSoon() {
         <Reveal>
           <div className="flex flex-wrap items-center gap-4">
             <span className="h-px w-10 bg-gradient-to-r from-red to-blue-bright" />
-            <span className="text-label text-white/60">Creative Work</span>
+            <Editable id="creative.kicker" as="span" className="text-label text-white/60">
+              Creative Work
+            </Editable>
             <span className="ml-auto inline-flex items-center gap-2 rounded-full border border-red/30 bg-red/10 px-4 py-1.5">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red shadow-[0_0_8px_2px_rgba(255,31,31,0.7)]" />
-              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-red">
+              <Editable
+                id="creative.badge"
+                as="span"
+                className="font-mono text-[10px] uppercase tracking-[0.2em] text-red"
+              >
                 Featured Reels
-              </span>
+              </Editable>
             </span>
           </div>
-          <h2 className="mt-5 max-w-3xl font-display text-[clamp(2.2rem,4.8vw,4rem)] uppercase leading-[0.95] text-chrome">
+          <Editable
+            id="creative.title"
+            as="h2"
+            className="mt-5 max-w-3xl font-display text-[clamp(2.2rem,4.8vw,4rem)] uppercase leading-[0.95] text-chrome"
+          >
             Video Editing &amp; Content Creation
-          </h2>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/60 md:text-lg">
-            Professional video editing, cinematic storytelling, social media
-            content creation, advertising creatives, motion graphics and
-            branded content.
-          </p>
+          </Editable>
+          <Editable
+            id="creative.description"
+            as="p"
+            className="mt-5 max-w-2xl text-base leading-relaxed text-white/60 md:text-lg"
+          >
+            Professional video editing, cinematic storytelling, social media content creation, advertising creatives, motion graphics and branded content.
+          </Editable>
         </Reveal>
 
         {/* Reel strip — live preview videos linking to Instagram */}

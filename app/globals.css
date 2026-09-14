@@ -524,3 +524,26 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ----------------------------------------------------------
+   Inline live editor — affordance for editable copy
+   ---------------------------------------------------------- */
+.editable-live {
+  outline: 1px dashed rgba(96, 165, 250, 0.55);
+  outline-offset: 4px;
+  border-radius: 4px;
+  cursor: text;
+  transition: background-color 0.2s ease, outline-color 0.2s ease;
+}
+.editable-live:hover {
+  background-color: rgba(96, 165, 250, 0.08);
+  outline-color: rgba(96, 165, 250, 0.9);
+}
+.editable-live:focus {
+  outline: 2px solid rgba(96, 165, 250, 0.9);
+  background-color: rgba(96, 165, 250, 0.1);
+}
+.editable-live:empty::before {
+  content: "Type here…";
+  color: rgba(255, 255, 255, 0.3);
+}

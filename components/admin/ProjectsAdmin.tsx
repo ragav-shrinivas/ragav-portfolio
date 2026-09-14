@@ -4,7 +4,8 @@ import { useEffect, useState, useCallback } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
 import { uploadFile, logAction, slugify } from "@/lib/admin";
-import { Btn, Card, Field, inputCls } from "./ui";
+import { cn } from "@/lib/cn";
+import { Btn, Card, Field, inputCls, Guide } from "./ui";
 
 type DB = SupabaseClient<Database>;
 type Row = Database["public"]["Tables"]["projects"]["Row"];
@@ -107,17 +108,28 @@ export function ProjectsAdmin({ supabase }: { supabase: DB }) {
         </Btn>
       </div>
 
+      <Guide
+        title="Add a project or build"
+        where="The Works page (/works) — as a project card, filterable by “AI / ML” or “Website”. Featured projects also anchor the homepage story."
+        points={[
+          "Choose the Category: “AI / ML” for research/model work, “Website” for client/production sites.",
+          "Tagline is the one-line hook under the title; Description is the full write-up in the modal.",
+          "Add a Website, GitHub or Research URL — each becomes a button on the card.",
+          "Upload a poster image (card thumbnail) and optionally a short preview video.",
+        ]}
+      />
+
       {editing && (
         <Card className="energy-border">
           <div className="grid gap-4 md:grid-cols-2">
-            <Field label="Title">
+            <Field label="Title" required hint="Project name shown on the card.">
               <input
                 className={inputCls}
                 value={editing.title ?? ""}
                 onChange={(e) => setEditing({ ...editing, title: e.target.value })}
               />
             </Field>
-            <Field label="Category">
+            <Field label="Category" hint="Which filter it appears under on /works.">
               <select
                 className={inputCls}
                 value={editing.category}
@@ -146,9 +158,14 @@ export function ProjectsAdmin({ supabase }: { supabase: DB }) {
                 }
               />
             </Field>
-            <Field label="Tech (comma separated)" className="md:col-span-2">
+            <Field
+              label="Tech (comma separated)"
+              hint="Shown as tags, e.g. “Next.js, Supabase, TailwindCSS”."
+              className="md:col-span-2"
+            >
               <input
                 className={inputCls}
+                placeholder="Next.js, Supabase, TailwindCSS"
                 value={techStr}
                 onChange={(e) => setTechStr(e.target.value)}
               />
@@ -239,36 +256,59 @@ export function ProjectsAdmin({ supabase }: { supabase: DB }) {
         </Card>
       )}
 
-      <div className="space-y-3">
-        {rows.map((r) => (
-          <Card key={r.id} className="flex items-center justify-between gap-4">
-            <div className="min-w-0">
-              <div className="flex items-center gap-3">
+      <div>
+        <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">
+          {rows.length} live on your site
+        </p>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+          {rows.map((r) => (
+            <div
+              key={r.id}
+              className="group glass overflow-hidden rounded-2xl border border-white/8"
+            >
+              <div className="relative aspect-[4/3] overflow-hidden bg-black/40">
+                {r.poster_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={r.poster_url}
+                    alt={r.title}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="grid h-full place-items-center font-mono text-[10px] uppercase tracking-[0.2em] text-white/25">
+                    {r.category === "ml" ? "AI / ML" : "Website"}
+                  </div>
+                )}
+                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/60 opacity-0 backdrop-blur-sm transition-opacity duration-200 group-hover:opacity-100">
+                  <Btn onClick={() => startEdit(r)}>Edit</Btn>
+                  <Btn variant="danger" onClick={() => remove(r)}>Delete</Btn>
+                </div>
                 <span
-                  className={
-                    r.category === "ml"
-                      ? "h-2 w-2 rounded-full bg-blue-bright"
-                      : "h-2 w-2 rounded-full bg-red"
-                  }
-                />
-                <span className="truncate font-semibold text-white">{r.title}</span>
-                <span className="font-mono text-[10px] uppercase text-white/35">
-                  #{r.sort_order}
+                  className={cn(
+                    "absolute left-2 top-2 rounded-full px-2 py-0.5 font-mono text-[9px] uppercase text-white",
+                    r.category === "ml" ? "bg-blue/70" : "bg-red/70"
+                  )}
+                >
+                  {r.category === "ml" ? "AI / ML" : "Website"}
                 </span>
+                {r.featured && (
+                  <span className="absolute right-2 top-2 rounded-full bg-black/60 px-2 py-0.5 font-mono text-[9px] text-white/80">
+                    ★ Featured
+                  </span>
+                )}
               </div>
-              <p className="mt-1 truncate text-xs text-white/40">{r.tagline}</p>
+              <div className="p-3">
+                <p className="truncate text-sm font-semibold text-white">{r.title}</p>
+                <p className="mt-0.5 truncate text-[11px] text-white/40">
+                  {r.tagline || "—"}
+                </p>
+              </div>
             </div>
-            <div className="flex shrink-0 gap-2">
-              <Btn onClick={() => startEdit(r)}>Edit</Btn>
-              <Btn variant="danger" onClick={() => remove(r)}>
-                Delete
-              </Btn>
-            </div>
-          </Card>
-        ))}
+          ))}
+        </div>
         {rows.length === 0 && (
           <p className="py-10 text-center font-mono text-xs uppercase tracking-[0.2em] text-white/35">
-            No projects yet
+            No projects yet — click “+ New Project” to add your first.
           </p>
         )}
       </div>

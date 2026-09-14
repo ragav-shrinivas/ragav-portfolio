@@ -6,6 +6,7 @@ import { FrameVideo } from "@/components/ui/FrameVideo";
 import { ProjectCard } from "./ProjectCard";
 import { ProjectModal } from "./ProjectModal";
 import { ReelCard } from "./ReelCard";
+import { Editable } from "@/components/edit/Editable";
 import { cn } from "@/lib/cn";
 import {
   projectCategories,
@@ -57,7 +58,7 @@ export function WorksClient({
             transition={{ duration: 0.8 }}
             className="text-label text-blue"
           >
-            Selected Work
+            <Editable id="works.kicker" as="span">Selected Work</Editable>
           </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
@@ -65,12 +66,11 @@ export function WorksClient({
             transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="mt-4 font-display text-[clamp(3rem,9vw,8rem)] uppercase leading-[0.9] text-chrome"
           >
-            The Works
+            <Editable id="works.title" as="span">The Works</Editable>
           </motion.h1>
-          <p className="mt-5 max-w-xl text-white/55">
-            Machine-learning systems and production websites — engineered,
-            shipped, and monitored in the real world.
-          </p>
+          <Editable id="works.subtitle" as="p" className="mt-5 max-w-xl text-white/55">
+            Machine-learning systems and production websites — engineered, shipped, and monitored in the real world.
+          </Editable>
         </div>
       </header>
 

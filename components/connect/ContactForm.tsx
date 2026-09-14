@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
+import { Editable } from "@/components/edit/Editable";
 import { siteConfig } from "@/lib/config";
 
 const PROJECT_TYPES = [
@@ -63,11 +64,16 @@ export function ContactForm() {
 
   return (
     <form onSubmit={onSubmit} className="energy-border glass-strong relative rounded-3xl p-7 md:p-10">
-      <p className="text-label text-blue">Send a Message</p>
-      <p className="mt-3 text-sm leading-relaxed text-white/50">
-        Every field is optional — share whatever's useful. Submitting opens a
-        prefilled WhatsApp message straight to me.
-      </p>
+      <Editable id="connect.form.title" as="p" className="text-label text-blue">
+        Send a Message
+      </Editable>
+      <Editable
+        id="connect.form.desc"
+        as="p"
+        className="mt-3 text-sm leading-relaxed text-white/50"
+      >
+        Every field is optional — share whatever&apos;s useful. Submitting opens a prefilled WhatsApp message straight to me.
+      </Editable>
 
       <div className="mt-7 grid gap-5 sm:grid-cols-2">
         <Field label="Name">
@@ -143,7 +149,7 @@ export function ContactForm() {
         whileTap={{ scale: 0.985 }}
         className="mt-8 inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-blue to-red px-8 py-4 text-sm font-semibold uppercase tracking-[0.16em] text-white shadow-[0_10px_40px_rgba(255,31,31,0.25)] transition-shadow hover:shadow-[0_10px_50px_rgba(96,165,250,0.35)]"
       >
-        Send Message
+        <Editable id="connect.form.submit" as="span">Send Message</Editable>
         <span aria-hidden>→</span>
       </motion.button>
 
@@ -153,7 +159,9 @@ export function ContactForm() {
           animate={{ opacity: 1, y: 0 }}
           className="mt-4 text-xs uppercase tracking-[0.14em] text-blue"
         >
-          WhatsApp opened in a new tab — say hi!
+          <Editable id="connect.form.sent" as="span">
+            WhatsApp opened in a new tab — say hi!
+          </Editable>
         </motion.p>
       )}
     </form>

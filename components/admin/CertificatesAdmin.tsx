@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/types";
 import { uploadFile, logAction } from "@/lib/admin";
-import { Btn, Card, Field, inputCls } from "./ui";
+import { Btn, Card, Field, inputCls, Guide } from "./ui";
 
 type DB = SupabaseClient<Database>;
 type Row = Database["public"]["Tables"]["certificates"]["Row"];
@@ -86,19 +86,36 @@ export function CertificatesAdmin({ supabase }: { supabase: DB }) {
         </Btn>
       </div>
 
+      <Guide
+        title="Add a certification or credential"
+        where="The Certifications page (/certifications) — shown as a verifiable credential card with your certificate image, title, issuer and a “Verify credential” button."
+        points={[
+          "Upload the certificate image — it becomes the card's preview. Landscape scans look best.",
+          "Category is the small label on top of the card (e.g. “SAP Enterprise Engineering”).",
+          "Verify URL is where the “Verify credential” button links (Credly, CertX, etc.).",
+          "Sort order controls position — lower numbers appear first.",
+        ]}
+      />
+
       {editing && (
         <Card className="energy-border">
           <div className="grid gap-4 md:grid-cols-2">
-            <Field label="Title" className="md:col-span-2">
+            <Field
+              label="Title"
+              required
+              hint="The certification name, e.g. “SAP Certified Associate – ABAP Cloud”."
+              className="md:col-span-2"
+            >
               <input
                 className={inputCls}
                 value={editing.title ?? ""}
                 onChange={(e) => setEditing({ ...editing, title: e.target.value })}
               />
             </Field>
-            <Field label="Category">
+            <Field label="Category" hint="Small label on the card, e.g. issuer or field.">
               <input
                 className={inputCls}
+                placeholder="SAP Enterprise Engineering"
                 value={editing.issuer ?? ""}
                 onChange={(e) => setEditing({ ...editing, issuer: e.target.value })}
               />
@@ -129,9 +146,10 @@ export function CertificatesAdmin({ supabase }: { supabase: DB }) {
                 }
               />
             </Field>
-            <Field label="Verify URL">
+            <Field label="Verify URL" hint="Where the “Verify credential” button links.">
               <input
                 className={inputCls}
+                placeholder="https://www.credly.com/badges/…"
                 value={editing.verify_url ?? ""}
                 onChange={(e) =>
                   setEditing({ ...editing, verify_url: e.target.value })
@@ -158,7 +176,11 @@ export function CertificatesAdmin({ supabase }: { supabase: DB }) {
                 }
               />
             </Field>
-            <Field label="Upload new image" className="md:col-span-2">
+            <Field
+              label="Upload new image"
+              hint="Recommended: a clear scan/photo of the certificate. Replaces the URL above."
+              className="md:col-span-2"
+            >
               <input
                 type="file"
                 accept="image/*"
@@ -187,26 +209,49 @@ export function CertificatesAdmin({ supabase }: { supabase: DB }) {
         </Card>
       )}
 
-      <div className="space-y-3">
-        {rows.map((r) => (
-          <Card key={r.id} className="flex items-center justify-between gap-4">
-            <div className="min-w-0">
-              <span className="truncate font-semibold text-white">{r.title}</span>
-              <p className="mt-1 truncate text-xs text-white/40">
-                {r.issuer} · {r.year}
-              </p>
+      <div>
+        <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-white/35">
+          {rows.length} live on your site
+        </p>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+          {rows.map((r) => (
+            <div
+              key={r.id}
+              className="group glass overflow-hidden rounded-2xl border border-white/8"
+            >
+              <div className="relative aspect-[4/3] overflow-hidden bg-black/40">
+                {r.image_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={r.image_url}
+                    alt={r.title}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="grid h-full place-items-center font-mono text-[10px] uppercase tracking-[0.2em] text-white/25">
+                    No image
+                  </div>
+                )}
+                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/60 opacity-0 backdrop-blur-sm transition-opacity duration-200 group-hover:opacity-100">
+                  <Btn onClick={() => { setEditing(r); setMsg(""); }}>Edit</Btn>
+                  <Btn variant="danger" onClick={() => remove(r)}>Delete</Btn>
+                </div>
+                <span className="absolute right-2 top-2 rounded-full bg-black/60 px-2 py-0.5 font-mono text-[9px] text-white/70">
+                  #{r.sort_order}
+                </span>
+              </div>
+              <div className="p-3">
+                <p className="truncate text-sm font-semibold text-white">{r.title}</p>
+                <p className="mt-0.5 truncate text-[11px] text-white/40">
+                  {r.issuer} · {r.year}
+                </p>
+              </div>
             </div>
-            <div className="flex shrink-0 gap-2">
-              <Btn onClick={() => { setEditing(r); setMsg(""); }}>Edit</Btn>
-              <Btn variant="danger" onClick={() => remove(r)}>
-                Delete
-              </Btn>
-            </div>
-          </Card>
-        ))}
+          ))}
+        </div>
         {rows.length === 0 && (
           <p className="py-10 text-center font-mono text-xs uppercase tracking-[0.2em] text-white/35">
-            No certificates yet
+            No certificates yet — click “+ New Certificate” to add your first.
           </p>
         )}
       </div>

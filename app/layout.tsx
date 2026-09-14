@@ -5,6 +5,8 @@ import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CursorTrail } from "@/components/ui/CursorTrail";
+import { EditProvider } from "@/components/edit/EditProvider";
+import { EditToolbar } from "@/components/edit/EditToolbar";
 import "./globals.css";
 
 const bebas = Bebas_Neue({
@@ -53,12 +55,15 @@ export default function RootLayout({
       className={`${bebas.variable} ${syne.variable} ${jetbrains.variable}`}
     >
       <body className="bg-base text-white antialiased">
-        <SmoothScroll>
-          <CursorTrail />
-          <Navbar />
-          <main className="relative">{children}</main>
-          <Footer />
-        </SmoothScroll>
+        <EditProvider>
+          <SmoothScroll>
+            <CursorTrail />
+            <Navbar />
+            <main className="relative">{children}</main>
+            <Footer />
+          </SmoothScroll>
+          <EditToolbar />
+        </EditProvider>
       </body>
     </html>
   );

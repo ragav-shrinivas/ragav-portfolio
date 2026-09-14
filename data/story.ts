@@ -21,7 +21,7 @@ export const story: StorySection[] = [
     kicker: "The Engineer",
     title: "Software Developer, AI/ML Engineer & Full-Stack Builder",
     description:
-      "Ragav builds at the intersection of intelligence and craft — production systems that think, and interfaces that feel alive. One mind across the full stack, from neural networks to pixels.",
+      "I build at the intersection of intelligence and craft — production systems that think, and interfaces that feel alive. One mind across the full stack, from neural networks to pixels.",
     align: "left",
     cards: [
       { title: "AI / ML Engineering", meta: "Models · Monitoring · Research", accent: "blue" },
