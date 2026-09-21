@@ -212,6 +212,9 @@ export function Hero() {
         if (dc[i]) {
           dc[i]!.style.filter = blur ? `blur(${blur}px)` : "none";
           dc[i]!.style.setProperty("--burst", String(pulse(p, b, 0.03)));
+          // Only capture pointer events while actually visible, so the faded
+          // cards never sit over (and block) the quick-access links at rest.
+          dc[i]!.style.pointerEvents = op > 0.5 ? "auto" : "none";
         }
       }
 
@@ -232,6 +235,9 @@ export function Hero() {
           el.style.transform = `translate(-50%, -50%) translate3d(${x}px, 0, 0) scale(${scale})`;
           el.style.filter = blur ? `blur(${blur}px)` : "none";
           el.style.setProperty("--burst", String(pulse(p, a + 0.022, 0.02)));
+          // Don't let the faded carousel cards block taps on the quick-access
+          // links (they overlay the hero centre at rest).
+          el.style.pointerEvents = op > 0.5 ? "auto" : "none";
         }
       }
 
@@ -493,7 +499,7 @@ export function Hero() {
                   ref={(el) => {
                     cardRefs.current[i] = el;
                   }}
-                  className="pointer-events-auto relative opacity-0 will-change-transform"
+                  className="pointer-events-none relative opacity-0 will-change-transform"
                 >
                   <span className="card-burst" />
                   <HeroCard data={card} />
@@ -504,14 +510,14 @@ export function Hero() {
         </div>
 
         {/* MOBILE CARDS — carousel (one centered card at a time) */}
-        <div className="absolute inset-0 z-20 md:hidden">
+        <div className="pointer-events-none absolute inset-0 z-20 md:hidden">
           {CARDS.map((card, i) => (
             <div
               key={card.index}
               ref={(el) => {
                 cardRefsM.current[i] = el;
               }}
-              className="absolute left-1/2 top-[52%] w-[86%] max-w-sm opacity-0 will-change-transform"
+              className="pointer-events-none absolute left-1/2 top-[52%] w-[86%] max-w-sm opacity-0 will-change-transform"
               style={{ transform: "translate(-50%, -50%)" }}
             >
               <span className="card-burst" />
