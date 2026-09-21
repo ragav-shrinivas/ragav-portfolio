@@ -3,6 +3,7 @@ import { Bebas_Neue, Syne, JetBrains_Mono } from "next/font/google";
 import { siteConfig } from "@/lib/config";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { Navbar } from "@/components/layout/Navbar";
+import { BackHome } from "@/components/layout/BackHome";
 import { Footer } from "@/components/layout/Footer";
 import { CursorTrail } from "@/components/ui/CursorTrail";
 import { EditProvider } from "@/components/edit/EditProvider";
@@ -59,6 +60,7 @@ export default function RootLayout({
           <SmoothScroll>
             <CursorTrail />
             <Navbar />
+            <BackHome />
             <main className="relative">{children}</main>
             <Footer />
           </SmoothScroll>
